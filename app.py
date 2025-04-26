@@ -1,3 +1,4 @@
+
 import shutil
 import subprocess
 import os
@@ -5,6 +6,9 @@ import sys
 from flask import Flask, request
 
 app = Flask(__name__)
+
+# あなたのGitHubリポジトリURLに書き換えてください！
+GIT_REMOTE_URL = "https://github.com/Masaaki1968/flask-webhook-server.git"
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
@@ -64,17 +68,24 @@ def webhook():
 
             # Gitユーザー設定
             try:
-                subprocess.run(["git", "config", "--global", "user.email", "masaaki1968@gmail.com"], check=True)
-                subprocess.run(["git", "config", "--global", "user.name", "masaaki inuta"], check=True)
+                subprocess.run(["git", "config", "--global", "user.email", "yourname@example.com"], check=True)
+                subprocess.run(["git", "config", "--global", "user.name", "Your Name"], check=True)
                 print("✅ Gitユーザー設定完了！")
             except subprocess.CalledProcessError as e:
                 print(f"❌ Gitユーザー設定エラー: {e}")
+
+            # Gitリモート設定
+            try:
+                subprocess.run(["git", "remote", "add", "origin", GIT_REMOTE_URL], check=True)
+                print("✅ Gitリモート(origin)を設定しました！")
+            except subprocess.CalledProcessError as e:
+                print(f"⚠️ Gitリモート設定エラー（たぶん既に設定済み）: {e}")
 
             # Git add, commit, push
             try:
                 subprocess.run(["git", "add", "main.tex"], check=True)
                 subprocess.run(["git", "commit", "-m", "Update main.tex from webhook"], check=True)
-                subprocess.run(["git", "push"], check=True)
+                subprocess.run(["git", "push", "-u", "origin", "HEAD"], check=True)
                 print("✅ Git Push完了！Overleafに反映されます！")
             except subprocess.CalledProcessError as e:
                 print(f"❌ Git操作エラー: {e}")
@@ -89,21 +100,3 @@ def webhook():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True, use_reloader=False)
-
-# ここでリモートリポジトリURLを設定（あなたのGitHubリポジトリURLに置き換えてね）
-GIT_REMOTE_URL = "https://github.com/Masaaki1968/flask-webhook-server.git"
-
-try:
-    # まずリモートを登録（すでに登録済みなら無視される）
-    subprocess.run(["git", "remote", "add", "origin", GIT_REMOTE_URL], check=True)
-    print("✅ Gitリモート(origin)を設定しました！")
-except subprocess.CalledProcessError as e:
-    print(f"⚠️ Gitリモート設定エラー（たぶん既に登録済み）: {e}")
-
-# そのあとpush
-try:
-    subprocess.run(["git", "push", "-u", "origin", "HEAD"], check=True)
-    print("✅ Git Push完了！Overleafに反映されます！")
-except subprocess.CalledProcessError as e:
-    print(f"❌ Git Pushエラー: {e}")
-
