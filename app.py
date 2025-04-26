@@ -8,7 +8,7 @@ from flask import Flask, request
 app = Flask(__name__)
 
 # あなたのGitHubリポジトリURLに書き換えてください！
-GIT_REMOTE_URL = "https://github.com/Masaaki1968/flask-webhook-server.git"
+GIT_REMOTE_URL = "https://Masaaki1968:ghp_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@github.com/Masaaki1968/flask-webhook-server.git"
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
