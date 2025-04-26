@@ -2,8 +2,6 @@ import shutil
 import subprocess
 import os
 import sys
-
-# Flaskアプリはこの上に定義済みとします
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -64,7 +62,15 @@ def webhook():
 
             print(f"✅ main.texファイルをプロジェクトにコピー: {destination_path}")
 
-            # Git操作
+            # Gitユーザー設定
+            try:
+                subprocess.run(["git", "config", "--global", "user.email", "masaaki1968@gmail.com"], check=True)
+                subprocess.run(["git", "config", "--global", "user.name", "masaaki inuta"], check=True)
+                print("✅ Gitユーザー設定完了！")
+            except subprocess.CalledProcessError as e:
+                print(f"❌ Gitユーザー設定エラー: {e}")
+
+            # Git add, commit, push
             try:
                 subprocess.run(["git", "add", "main.tex"], check=True)
                 subprocess.run(["git", "commit", "-m", "Update main.tex from webhook"], check=True)
