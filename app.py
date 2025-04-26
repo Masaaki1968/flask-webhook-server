@@ -74,7 +74,7 @@ def webhook():
             except subprocess.CalledProcessError as e:
                 print(f"❌ Gitユーザー設定エラー: {e}")
 
-            # Gitリモート設定
+            # Gitリモート設定 
             try:
                 subprocess.run(["git", "remote", "add", "origin", GIT_REMOTE_URL], check=True)
                 print("✅ Gitリモート(origin)を設定しました！")
