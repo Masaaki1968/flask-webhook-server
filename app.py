@@ -1,6 +1,10 @@
-from flask import Flask, request
+import shutil
+import subprocess
 import os
 import sys
+
+# Flaskアプリはこの上に定義済みとします
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -47,11 +51,27 @@ def webhook():
 """
 
             # /tmpディレクトリにmain.texとして保存
-            save_path = "/tmp/main.tex"
-            with open(save_path, "w", encoding="utf-8") as f:
+            tmp_path = "/tmp/main.tex"
+            with open(tmp_path, "w", encoding="utf-8") as f:
                 f.write(latex_template)
 
-            print(f"✅ main.texファイル作成完了: {save_path}")
+            print(f"✅ /tmp/main.texファイル作成完了")
+
+            # プロジェクトフォルダにコピー
+            project_root = os.path.dirname(os.path.abspath(__file__))
+            destination_path = os.path.join(project_root, "main.tex")
+            shutil.copy(tmp_path, destination_path)
+
+            print(f"✅ main.texファイルをプロジェクトにコピー: {destination_path}")
+
+            # Git操作
+            try:
+                subprocess.run(["git", "add", "main.tex"], check=True)
+                subprocess.run(["git", "commit", "-m", "Update main.tex from webhook"], check=True)
+                subprocess.run(["git", "push"], check=True)
+                print("✅ Git Push完了！Overleafに反映されます！")
+            except subprocess.CalledProcessError as e:
+                print(f"❌ Git操作エラー: {e}")
 
     except Exception as e:
         print(f"❌ 例外発生: {e}")
