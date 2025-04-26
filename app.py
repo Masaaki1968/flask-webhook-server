@@ -5,12 +5,13 @@ app = Flask(__name__)
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    print("⭐ リクエスト受信")  # ← 追加（確実にリクエスト到達をログ出す）
-    data = request.get_json(force=True)  # ← force=True
-    if data is None:
-        print("⚠️ データが来ていない！")
-    else:
-        print(f"✅ 受信データ: {data}")
+    print("⭐ リクエスト受信しました！")  # まず絶対出す
+    print(f"📦 Rawデータ内容: {request.data}")  # 本当のRAWデータを見る
+    try:
+        data = request.get_json(force=True)
+        print(f"✅ JSON受信データ: {data}")
+    except Exception as e:
+        print(f"❌ JSONパースエラー: {e}")
     return "OK", 200
 
 if __name__ == "__main__":
