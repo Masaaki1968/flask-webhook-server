@@ -89,3 +89,21 @@ def webhook():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True, use_reloader=False)
+
+# ここでリモートリポジトリURLを設定（あなたのGitHubリポジトリURLに置き換えてね）
+GIT_REMOTE_URL = "https://github.com/Masaaki1968/flask-webhook-server.git"
+
+try:
+    # まずリモートを登録（すでに登録済みなら無視される）
+    subprocess.run(["git", "remote", "add", "origin", GIT_REMOTE_URL], check=True)
+    print("✅ Gitリモート(origin)を設定しました！")
+except subprocess.CalledProcessError as e:
+    print(f"⚠️ Gitリモート設定エラー（たぶん既に登録済み）: {e}")
+
+# そのあとpush
+try:
+    subprocess.run(["git", "push", "-u", "origin", "HEAD"], check=True)
+    print("✅ Git Push完了！Overleafに反映されます！")
+except subprocess.CalledProcessError as e:
+    print(f"❌ Git Pushエラー: {e}")
+
