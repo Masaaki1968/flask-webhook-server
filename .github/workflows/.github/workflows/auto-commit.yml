@@ -1,0 +1,21 @@
+name: Auto Commit main.tex
+
+on:
+  push:
+    branches:
+      - auto-update
+  workflow_dispatch:
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "yourname@example.com"
+          git add main.tex
+          git commit -m "Auto update main.tex" || echo "No changes to commit"
+          git push
