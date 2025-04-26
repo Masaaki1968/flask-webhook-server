@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    # ★ここを重要ポイントに変更★
-    data = request.get_json(force=True)  # force=Trueで無理やりJSONとして扱う
+    print("⭐ リクエスト受信")  # ← 追加（確実にリクエスト到達をログ出す）
+    data = request.get_json(force=True)  # ← force=True
     if data is None:
         print("⚠️ データが来ていない！")
     else:
